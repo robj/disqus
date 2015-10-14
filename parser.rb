@@ -14,9 +14,6 @@ format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
 
 
 
-formatted_hashes = []
-
-
 def line_to_formatted_hash(line)
 
     tokenized_line =  @parser.parse(line)
