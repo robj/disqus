@@ -79,18 +79,20 @@ end
 
 # read from stdin and create formatted hashes 
 
-ARGF.each do |line|
+ARGF.each_with_index do |line, idx|
 
-      formatted_hash = line_to_formatted_hash(line)
-      formatted_hashes << formatted_hash
+      begin
+          
+            formatted_hash = line_to_formatted_hash(line)
+            puts formatted_hash.to_json + "\n"
 
-end
+      rescue Exception => e
 
+            puts 'Error proccessing Line '+idx.to_s
+            puts e
+          
+      end
 
-
-formatted_hashes.each do |h|
-
-  puts h.to_json + "\n"
 
 end
 
