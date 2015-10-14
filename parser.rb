@@ -20,9 +20,10 @@ format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
   #   hash['protocol'] = tokenized_line["%H"]
 
 
-
+# reuse a single instance of the parser
 @parser = ApacheLogRegex.new(format)
-@line_hashes = []
+
+line_hashes = []
 
 def line_to_formatted_hash(line)
 
@@ -67,6 +68,15 @@ def line_to_formatted_hash(line)
     hash['date'] = iso8601_time 
 
 
+    # set '-' values to nil
+
+    hash.each do |k,v|
+
+      hash[k] = nil if hash[k] == '-'
+
+    end
+
+
 
     hash
 
@@ -78,14 +88,14 @@ end
 File.foreach logfile do |line|
 
       formatted_hash = line_to_formatted_hash(line)
-      @line_hashes << formatted_hash
+      line_hashes << formatted_hash
 
 end
 
 
-@line_hashes.each do |h|
+line_hashes.each do |h|
 
-  pp h#.to_json
+  puts h.to_json
   puts '-----------'
 
 end
