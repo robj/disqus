@@ -6,24 +6,21 @@ require 'json'
 require 'date'
 require 'time'
 
-logfile = ARGV[0]
-
-
 
 #http://httpd.apache.org/docs/2.2/logs.html
 format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
 
-
-  #   format = '%h %l %u %t \" %m %U%q %H \" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
-  #   hash['method'] = tokenized_line["%m"]
-  #   hash['url'] = tokenized_line["%U%q"]
-  #   hash['protocol'] = tokenized_line["%H"]
+# This format string fails to work with ApacheLogRegex, but would allow easier seperateion of method, url, protocol 
+# format = '%h %l %u %t \" %m %U%q %H \" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
+# hash['method'] = tokenized_line["%m"]
+# hash['url'] = tokenized_line["%U%q"]
+# hash['protocol'] = tokenized_line["%H"]
 
 
 # reuse a single instance of the parser
 @parser = ApacheLogRegex.new(format)
 
-line_hashes = []
+formatted_hashes = []
 
 def line_to_formatted_hash(line)
 
@@ -61,7 +58,6 @@ def line_to_formatted_hash(line)
    # convert apache date string to UTC ISO 8601 time
 
     apache_date_string = tokenized_line["%t"]
-    puts apache_date_string
     date_time = DateTime.strptime( apache_date_string, "[%d/%b/%Y:%H:%M:%S %Z]")
     iso8601_time = date_time.to_time.utc.iso8601
 
@@ -85,17 +81,24 @@ def line_to_formatted_hash(line)
 end
 
 
-File.foreach logfile do |line|
+
+# read from stdin and create formatted hashes 
+
+ARGF.each do |line|
 
       formatted_hash = line_to_formatted_hash(line)
-      line_hashes << formatted_hash
+      formatted_hashes << formatted_hash
 
 end
 
 
-line_hashes.each do |h|
+output_json = ''
 
-  puts h.to_json
-  puts '-----------'
+formatted_hashes.each do |h|
+
+  output_json << h.to_json + "\n"
 
 end
+
+
+puts output_json
