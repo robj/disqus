@@ -1,26 +1,21 @@
 #!/usr/bin/env ruby
 
 require 'apachelogregex'
-require 'pp'
 require 'json'
 require 'date'
 require 'time'
 
 
-#http://httpd.apache.org/docs/2.2/logs.html
-format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
-
-# This format string fails to work with ApacheLogRegex, but would allow easier seperateion of method, url, protocol 
-# format = '%h %l %u %t \" %m %U%q %H \" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
-# hash['method'] = tokenized_line["%m"]
-# hash['url'] = tokenized_line["%U%q"]
-# hash['protocol'] = tokenized_line["%H"]
-
-
+# http://httpd.apache.org/docs/2.2/logs.html
 # reuse a single instance of the parser
+
+format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
 @parser = ApacheLogRegex.new(format)
 
+
+
 formatted_hashes = []
+
 
 def line_to_formatted_hash(line)
 
@@ -92,13 +87,11 @@ ARGF.each do |line|
 end
 
 
-output_json = ''
 
 formatted_hashes.each do |h|
 
-  output_json << h.to_json + "\n"
+  puts h.to_json + "\n"
 
 end
 
 
-puts output_json
