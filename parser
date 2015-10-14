@@ -79,7 +79,7 @@ end
 
 
 
-# read from stdin and create formatted hashes 
+# read from stdin and create formatted hashes, print with to_json
 
 ARGF.each_with_index do |line, idx|
 
